@@ -182,24 +182,88 @@
             </div>
         </section>
 
-        <!-- Focus Areas Section (Map) -->
+        <!-- Focus Areas Section -->
         <section id="wilayah" class="py-20 bg-primary-900 text-white relative">
+            <!-- Background detail -->
             <div class="absolute inset-0 opacity-5">
                 <div class="h-full w-full bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:20px_20px]"></div>
             </div>
 
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                <div class="text-center mb-12">
+                <div class="text-center mb-16">
                     <h2 class="text-3xl md:text-4xl font-serif font-bold mb-4" data-i18n="focus_title">Wilayah Intervensi Fokus</h2>
                     <div class="w-24 h-1 bg-accent-500 mx-auto rounded"></div>
-                    <p class="mt-6 text-primary-100 max-w-2xl mx-auto text-lg" data-i18n="focus_desc">Peta interaktif titik krusial di Indonesia Timur yang membutuhkan akselerasi pembangunan dasar berdasarkan data BPS & Kemenkes.</p>
+                    <p class="mt-6 text-primary-100 max-w-2xl mx-auto text-lg" data-i18n="focus_desc">Mendedikasikan sumber daya pada titik-titik krusial di Indonesia Timur yang sangat membutuhkan akselerasi pembangunan dasar.</p>
                 </div>
 
-                <div class="bg-white rounded-2xl overflow-hidden shadow-2xl p-2 h-[500px]">
-                    <div id="map" class="w-full h-full rounded-xl z-0 relative" style="z-index: 10;"></div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Area 1 -->
+                    <div class="region-card bg-primary-800 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition duration-300 border border-primary-700 cursor-pointer transform hover:-translate-y-1" data-region="papua">
+                        <div class="h-48 overflow-hidden relative">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Raja_Ampat%2C_Mutiara_Indah_di_Timur_Indonesia.jpg/800px-Raja_Ampat%2C_Mutiara_Indah_di_Timur_Indonesia.jpg" alt="Papua" class="w-full h-full object-cover opacity-80 hover:opacity-100 transition duration-300 group-hover:scale-110">
+                            <div class="absolute inset-0 bg-gradient-to-t from-primary-900 to-transparent"></div>
+                            <div class="absolute top-4 right-4 bg-black/40 backdrop-blur-sm p-2 rounded-full opacity-80 hover:opacity-100 transition">
+                                <i class="fas fa-map-marked-alt text-white"></i>
+                            </div>
+                            <h3 class="absolute bottom-4 left-6 text-2xl font-bold font-serif text-white" data-i18n="focus1_title">Papua</h3>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-primary-100 text-sm" data-i18n="focus1_desc">Titik mula pergerakan kami. Memfokuskan pada pembangunan sanitasi perintis dan penyediaan akses air di wilayah pedalaman.</p>
+                            <p class="mt-4 text-accent-400 text-xs font-semibold uppercase tracking-wider flex items-center"><i class="fas fa-search-location mr-1"></i> Klik untuk lihat peta</p>
+                        </div>
+                    </div>
+
+                    <!-- Area 2 -->
+                    <div class="region-card bg-primary-800 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition duration-300 border border-primary-700 cursor-pointer transform hover:-translate-y-1" data-region="ntb">
+                        <div class="h-48 overflow-hidden relative">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Mount_Rinjani_from_Sembalun_Lawang.jpg/800px-Mount_Rinjani_from_Sembalun_Lawang.jpg" alt="Nusa Tenggara Barat" class="w-full h-full object-cover opacity-80 hover:opacity-100 transition duration-300 group-hover:scale-110">
+                            <div class="absolute inset-0 bg-gradient-to-t from-primary-900 to-transparent"></div>
+                            <div class="absolute top-4 right-4 bg-black/40 backdrop-blur-sm p-2 rounded-full opacity-80 hover:opacity-100 transition">
+                                <i class="fas fa-map-marked-alt text-white"></i>
+                            </div>
+                            <h3 class="absolute bottom-4 left-6 text-2xl font-bold font-serif text-white" data-i18n="focus2_title">Nusa Tenggara Barat (NTB)</h3>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-primary-100 text-sm" data-i18n="focus2_desc">Intervensi difokuskan pada penanganan gizi spesifik, penyediaan air bersih di daerah krisis air, dan penguatan kelompok rentan.</p>
+                            <p class="mt-4 text-accent-400 text-xs font-semibold uppercase tracking-wider flex items-center"><i class="fas fa-search-location mr-1"></i> Klik untuk lihat peta</p>
+                        </div>
+                    </div>
+
+                    <!-- Area 3 -->
+                    <div class="region-card bg-primary-800 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition duration-300 border border-primary-700 cursor-pointer transform hover:-translate-y-1" data-region="ntt">
+                        <div class="h-48 overflow-hidden relative">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Padar_Island_in_Komodo_National_Park.jpg/800px-Padar_Island_in_Komodo_National_Park.jpg" alt="Nusa Tenggara Timur" class="w-full h-full object-cover opacity-80 hover:opacity-100 transition duration-300 group-hover:scale-110">
+                            <div class="absolute inset-0 bg-gradient-to-t from-primary-900 to-transparent"></div>
+                            <div class="absolute top-4 right-4 bg-black/40 backdrop-blur-sm p-2 rounded-full opacity-80 hover:opacity-100 transition">
+                                <i class="fas fa-map-marked-alt text-white"></i>
+                            </div>
+                            <h3 class="absolute bottom-4 left-6 text-2xl font-bold font-serif text-white" data-i18n="focus3_title">Nusa Tenggara Timur (NTT)</h3>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-primary-100 text-sm" data-i18n="focus3_desc">Mengatasi tingginya angka stunting melalui kolaborasi lintas sektor serta pemenuhan infrastruktur sanitasi komunal yang adaptif.</p>
+                            <p class="mt-4 text-accent-400 text-xs font-semibold uppercase tracking-wider flex items-center"><i class="fas fa-search-location mr-1"></i> Klik untuk lihat peta</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
+
+        <!-- Map Modal Overlay -->
+        <div id="map-modal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 bg-black/70 backdrop-blur-sm transition-opacity">
+            <div class="bg-white rounded-2xl w-full max-w-4xl shadow-2xl overflow-hidden flex flex-col relative transform scale-95 transition-transform duration-300" id="map-modal-content">
+                <!-- Header -->
+                <div class="flex justify-between items-center p-4 border-b border-gray-100 bg-gray-50">
+                    <h3 class="text-xl font-bold text-primary-900 font-serif" id="map-modal-title">Peta Lokasi</h3>
+                    <button id="close-map-modal" class="text-gray-400 hover:text-red-500 transition focus:outline-none p-2 rounded-full hover:bg-gray-200">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                <!-- Map Container -->
+                <div class="w-full h-[500px] relative bg-gray-100">
+                    <div id="modal-map" class="absolute inset-0 z-0"></div>
+                </div>
+            </div>
+        </div>
 
         <!-- Gallery Section -->
         <section id="galeri" class="py-20 bg-offwhite">
