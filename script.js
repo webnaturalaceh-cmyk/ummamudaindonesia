@@ -23,7 +23,13 @@ const translations = {
     "pillar4_title": { id: "Inklusi Disabilitas", en: "Disability Inclusion" },
     "pillar4_desc": { id: "Mendorong pemberdayaan ekonomi, penyediaan alat bantu aksesibilitas, serta advokasi hak-hak dasar bagi penyandang disabilitas di daerah terpencil.", en: "Encouraging economic empowerment, providing accessibility aids, and advocating for the basic rights of people with disabilities in remote areas." },
     "focus_title": { id: "Wilayah Intervensi Fokus", en: "Focus Intervention Areas" },
-    "focus_desc": { id: "Peta interaktif titik krusial di Indonesia Timur yang membutuhkan akselerasi pembangunan dasar berdasarkan data BPS & Kemenkes.", en: "Interactive map of crucial points in Eastern Indonesia requiring basic development acceleration based on BPS & Kemenkes data." },
+    "focus_desc": { id: "Mendedikasikan sumber daya pada titik-titik krusial di Indonesia Timur yang sangat membutuhkan akselerasi pembangunan dasar.", en: "Dedicating resources to crucial points in Eastern Indonesia that desperately need acceleration of basic development." },
+    "focus1_title": { id: "Papua", en: "Papua" },
+    "focus1_desc": { id: "Titik mula pergerakan kami. Memfokuskan pada pembangunan sanitasi perintis dan penyediaan akses air di wilayah pedalaman.", en: "The starting point of our movement. Focusing on pioneer sanitation development and water access provision in remote areas." },
+    "focus2_title": { id: "Nusa Tenggara Barat (NTB)", en: "West Nusa Tenggara (NTB)" },
+    "focus2_desc": { id: "Intervensi difokuskan pada penanganan gizi spesifik, penyediaan air bersih di daerah krisis air, dan penguatan kelompok rentan.", en: "Interventions are focused on specific nutrition handling, clean water provision in water crisis areas, and strengthening vulnerable groups." },
+    "focus3_title": { id: "Nusa Tenggara Timur (NTT)", en: "East Nusa Tenggara (NTT)" },
+    "focus3_desc": { id: "Mengatasi tingginya angka stunting melalui kolaborasi lintas sektor serta pemenuhan infrastruktur sanitasi komunal yang adaptif.", en: "Overcoming the high rate of stunting through cross-sector collaboration and the fulfillment of adaptive communal sanitation infrastructure." },
     "gallery_title": { id: "Galeri Kegiatan", en: "Activity Gallery" },
     "gallery_desc": { id: "Rekam jejak aksi nyata kami merajut asa dan membawa perubahan bagi masyarakat di ujung timur Indonesia.", en: "A track record of our real actions weaving hope and bringing change to communities in the eastern tip of Indonesia." },
     "gallery_btn": { id: "Lihat Semua Album", en: "View All Albums" },
@@ -144,25 +150,26 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ==========================================
-    // Interactive Map (Leaflet)
+    // Map Modal Logic (Leaflet)
     // ==========================================
-    const mapElement = document.getElementById('map');
-    if (mapElement && typeof L !== 'undefined') {
-        // Initialize map centered on Eastern Indonesia
-        const map = L.map('map').setView([-4.5, 125.5], 5);
+    const mapModal = document.getElementById('map-modal');
+    const closeMapModal = document.getElementById('close-map-modal');
+    const regionCards = document.querySelectorAll('.region-card');
+    
+    if (mapModal && typeof L !== 'undefined') {
+        let modalMap = null;
+        let currentMarker = null;
+        let activeRegionKey = null;
 
-        // Add cleaner CartoDB light basemap so colored regions pop out
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-            maxZoom: 18,
-            attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
-        }).addTo(map);
-
-        // Focus Areas Data (Sourced from BPS & SSGI 2022)
-        const focusProvinces = {
-            "Papua": {
+        const locations = {
+            "papua": {
+                name: "Papua",
+                coords: [-4.2699, 138.0803],
+                zoom: 6,
                 infoId: `
-                    <div class="p-2 min-w-[200px]">
-                        <h3 class="font-bold text-lg mb-1 text-primary-900">Provinsi Papua (Krisis)</h3>
+                    <div class="p-2 min-w-[220px]">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Raja_Ampat%2C_Mutiara_Indah_di_Timur_Indonesia.jpg/800px-Raja_Ampat%2C_Mutiara_Indah_di_Timur_Indonesia.jpg" alt="Papua" style="width: 100%; height: 120px; object-fit: cover; border-radius: 8px; margin-bottom: 12px; display: block;">
+                        <h3 class="font-bold text-lg mb-1 text-primary-900">Provinsi Papua</h3>
                         <p class="text-xs text-gray-500 mb-3 border-b pb-2"><i>Sumber: BPS & SSGI Kemenkes (2022)</i></p>
                         <ul class="text-sm space-y-2 text-gray-700">
                             <li><i class="fas fa-seedling text-primary-600 w-4"></i> <b>Gizi (Stunting):</b> Prevalensi tinggi mencapai 34,6%.</li>
@@ -172,8 +179,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 `,
                 infoEn: `
-                    <div class="p-2 min-w-[200px]">
-                        <h3 class="font-bold text-lg mb-1 text-primary-900">Papua Province (Critical)</h3>
+                    <div class="p-2 min-w-[220px]">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Raja_Ampat%2C_Mutiara_Indah_di_Timur_Indonesia.jpg/800px-Raja_Ampat%2C_Mutiara_Indah_di_Timur_Indonesia.jpg" alt="Papua" style="width: 100%; height: 120px; object-fit: cover; border-radius: 8px; margin-bottom: 12px; display: block;">
+                        <h3 class="font-bold text-lg mb-1 text-primary-900">Papua Province</h3>
                         <p class="text-xs text-gray-500 mb-3 border-b pb-2"><i>Source: BPS & SSGI Kemenkes (2022)</i></p>
                         <ul class="text-sm space-y-2 text-gray-700">
                             <li><i class="fas fa-seedling text-primary-600 w-4"></i> <b>Nutrition (Stunting):</b> High prevalence reaching 34.6%.</li>
@@ -181,13 +189,16 @@ document.addEventListener('DOMContentLoaded', () => {
                             <li><i class="fas fa-wheelchair text-primary-600 w-4"></i> <b>Disability:</b> Challenging geography makes distributing aids difficult.</li>
                         </ul>
                     </div>
-                `,
-                color: '#cc0096' // Deep Magenta
+                `
             },
-            "NTT": {
+            "ntt": {
+                name: "Nusa Tenggara Timur (NTT)",
+                coords: [-8.6500, 121.0833],
+                zoom: 7,
                 infoId: `
-                    <div class="p-2 min-w-[200px]">
-                        <h3 class="font-bold text-lg mb-1 text-primary-900">Provinsi NTT (Krisis)</h3>
+                    <div class="p-2 min-w-[220px]">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Padar_Island_in_Komodo_National_Park.jpg/800px-Padar_Island_in_Komodo_National_Park.jpg" alt="NTT" style="width: 100%; height: 120px; object-fit: cover; border-radius: 8px; margin-bottom: 12px; display: block;">
+                        <h3 class="font-bold text-lg mb-1 text-primary-900">Provinsi NTT</h3>
                         <p class="text-xs text-gray-500 mb-3 border-b pb-2"><i>Sumber: BPS & SSGI Kemenkes (2022)</i></p>
                         <ul class="text-sm space-y-2 text-gray-700">
                             <li><i class="fas fa-seedling text-primary-600 w-4"></i> <b>Gizi (Stunting):</b> Tertinggi di Indonesia (35,3%).</li>
@@ -197,8 +208,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 `,
                 infoEn: `
-                    <div class="p-2 min-w-[200px]">
-                        <h3 class="font-bold text-lg mb-1 text-primary-900">NTT Province (Critical)</h3>
+                    <div class="p-2 min-w-[220px]">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Padar_Island_in_Komodo_National_Park.jpg/800px-Padar_Island_in_Komodo_National_Park.jpg" alt="NTT" style="width: 100%; height: 120px; object-fit: cover; border-radius: 8px; margin-bottom: 12px; display: block;">
+                        <h3 class="font-bold text-lg mb-1 text-primary-900">NTT Province</h3>
                         <p class="text-xs text-gray-500 mb-3 border-b pb-2"><i>Source: BPS & SSGI Kemenkes (2022)</i></p>
                         <ul class="text-sm space-y-2 text-gray-700">
                             <li><i class="fas fa-seedling text-primary-600 w-4"></i> <b>Nutrition (Stunting):</b> Highest in Indonesia (35.3%).</li>
@@ -206,13 +218,16 @@ document.addEventListener('DOMContentLoaded', () => {
                             <li><i class="fas fa-wheelchair text-primary-600 w-4"></i> <b>Disability:</b> Very minimal disability-friendly public facilities.</li>
                         </ul>
                     </div>
-                `,
-                color: '#fc00b9' // Bright Pink
+                `
             },
-            "NTB": {
+            "ntb": {
+                name: "Nusa Tenggara Barat (NTB)",
+                coords: [-8.6529, 117.3616],
+                zoom: 7,
                 infoId: `
-                    <div class="p-2 min-w-[200px]">
-                        <h3 class="font-bold text-lg mb-1 text-primary-900">Provinsi NTB (Waspada)</h3>
+                    <div class="p-2 min-w-[220px]">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Mount_Rinjani_from_Sembalun_Lawang.jpg/800px-Mount_Rinjani_from_Sembalun_Lawang.jpg" alt="NTB" style="width: 100%; height: 120px; object-fit: cover; border-radius: 8px; margin-bottom: 12px; display: block;">
+                        <h3 class="font-bold text-lg mb-1 text-primary-900">Provinsi NTB</h3>
                         <p class="text-xs text-gray-500 mb-3 border-b pb-2"><i>Sumber: BPS & SSGI Kemenkes (2022)</i></p>
                         <ul class="text-sm space-y-2 text-gray-700">
                             <li><i class="fas fa-seedling text-primary-600 w-4"></i> <b>Gizi (Stunting):</b> Masih tergolong tinggi di angka 32,7%.</li>
@@ -222,8 +237,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 `,
                 infoEn: `
-                    <div class="p-2 min-w-[200px]">
-                        <h3 class="font-bold text-lg mb-1 text-primary-900">NTB Province (Warning)</h3>
+                    <div class="p-2 min-w-[220px]">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Mount_Rinjani_from_Sembalun_Lawang.jpg/800px-Mount_Rinjani_from_Sembalun_Lawang.jpg" alt="NTB" style="width: 100%; height: 120px; object-fit: cover; border-radius: 8px; margin-bottom: 12px; display: block;">
+                        <h3 class="font-bold text-lg mb-1 text-primary-900">NTB Province</h3>
                         <p class="text-xs text-gray-500 mb-3 border-b pb-2"><i>Source: BPS & SSGI Kemenkes (2022)</i></p>
                         <ul class="text-sm space-y-2 text-gray-700">
                             <li><i class="fas fa-seedling text-primary-600 w-4"></i> <b>Nutrition (Stunting):</b> Still relatively high at 32.7%.</li>
@@ -231,120 +247,83 @@ document.addEventListener('DOMContentLoaded', () => {
                             <li><i class="fas fa-wheelchair text-primary-600 w-4"></i> <b>Disability:</b> Focus on empowering vulnerable groups.</li>
                         </ul>
                     </div>
-                `,
-                color: '#ff66d9' // Lighter Pink
+                `
             }
         };
 
-        const mapLayers = [];
+        const customIcon = L.divIcon({
+            html: '<div style="background-color: #cc0096; color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 6px rgba(0,0,0,0.3); border: 2px solid white;"><i class="fas fa-map-marker-alt"></i></div>',
+            className: 'custom-leaflet-icon',
+            iconSize: [30, 30],
+            iconAnchor: [15, 30],
+            popupAnchor: [0, -30]
+        });
 
-        // Fetch GeoJSON data for Indonesian provinces
-        fetch('https://raw.githubusercontent.com/ans-4175/peta-indonesia-geojson/master/indonesia-prov.geojson')
-            .then(res => res.json())
-            .then(data => {
-                L.geoJSON(data, {
-                    style: function(feature) {
-                        const provName = String(feature.properties.Propinsi || feature.properties.PROVINSI || feature.properties.name || "").toUpperCase();
-                        
-                        let isFocus = false;
-                        let fillColor = '#cbd5e1'; // slate-300 for non-focus
-                        let opacity = 0.4;
-                        
-                        if (provName.includes('PAPUA')) {
-                            isFocus = true; fillColor = focusProvinces["Papua"].color; opacity = 0.8;
-                        } else if (provName.includes('TENGGARA TIMUR') || provName === 'NTT') {
-                            isFocus = true; fillColor = focusProvinces["NTT"].color; opacity = 0.8;
-                        } else if (provName.includes('TENGGARA BARAT') || provName === 'NTB') {
-                            isFocus = true; fillColor = focusProvinces["NTB"].color; opacity = 0.8;
-                        }
+        function openMapModal(regionKey) {
+            const loc = locations[regionKey];
+            if (!loc) return;
 
-                        if (isFocus) {
-                            return {
-                                fillColor: fillColor,
-                                weight: 2,
-                                opacity: 1,
-                                color: 'white',
-                                dashArray: '3',
-                                fillOpacity: opacity
-                            };
-                        } else {
-                            return {
-                                fillColor: fillColor,
-                                weight: 1,
-                                opacity: 1,
-                                color: 'white',
-                                fillOpacity: opacity
-                            };
-                        }
-                    },
-                    onEachFeature: function(feature, layer) {
-                        const provName = String(feature.properties.Propinsi || feature.properties.PROVINSI || feature.properties.name || "").toUpperCase();
-                        
-                        let key = null;
-                        if (provName.includes('PAPUA')) key = "Papua";
-                        else if (provName.includes('TENGGARA TIMUR') || provName === 'NTT') key = "NTT";
-                        else if (provName.includes('TENGGARA BARAT') || provName === 'NTB') key = "NTB";
+            activeRegionKey = regionKey;
+            
+            // Show modal
+            mapModal.classList.remove('hidden');
+            mapModal.classList.add('flex');
+            
+            // We need a tiny timeout so the modal's display:flex renders to the DOM
+            // before Leaflet computes the container dimensions, preventing grey map tiles.
+            setTimeout(() => {
+                if (!modalMap) {
+                    modalMap = L.map('modal-map').setView(loc.coords, loc.zoom);
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        maxZoom: 18,
+                        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                    }).addTo(modalMap);
+                } else {
+                    modalMap.setView(loc.coords, loc.zoom);
+                }
 
-                        if (key) {
-                            // Add pulsing circle marker in the center for extra visibility
-                            const center = layer.getBounds().getCenter();
-                            const pulseMarker = L.circleMarker(center, {
-                                radius: 8,
-                                fillColor: 'white',
-                                color: focusProvinces[key].color,
-                                weight: 3,
-                                opacity: 1,
-                                fillOpacity: 1
-                            }).addTo(map);
+                modalMap.invalidateSize(); // Fixes tile rendering in modals
 
-                            const contentId = focusProvinces[key].infoId;
-                            const contentEn = focusProvinces[key].infoEn;
-                            
-                            layer.bindPopup(currentLang === 'id' ? contentId : contentEn);
-                            pulseMarker.bindPopup(currentLang === 'id' ? contentId : contentEn);
-                            
-                            mapLayers.push({ layer: layer, data: focusProvinces[key] });
-                            mapLayers.push({ layer: pulseMarker, data: focusProvinces[key] });
+                if (currentMarker) {
+                    modalMap.removeLayer(currentMarker);
+                }
 
-                            // Hover effects
-                            layer.on({
-                                mouseover: function(e) {
-                                    var l = e.target;
-                                    l.setStyle({
-                                        weight: 3,
-                                        color: '#333',
-                                        dashArray: '',
-                                        fillOpacity: 0.9
-                                    });
-                                    if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
-                                        l.bringToFront();
-                                    }
-                                },
-                                mouseout: function(e) {
-                                    var l = e.target;
-                                    l.setStyle({
-                                        weight: 2,
-                                        color: 'white',
-                                        dashArray: '3',
-                                        fillOpacity: 0.8
-                                    });
-                                }
-                            });
-                        }
-                    }
-                }).addTo(map);
+                currentMarker = L.marker(loc.coords, {icon: customIcon}).addTo(modalMap);
+                currentMarker.bindPopup(currentLang === 'id' ? loc.infoId : loc.infoEn).openPopup();
+                
+            }, 100);
+        }
 
-                // Expose function to update popups when language changes
-                window.updateMapLanguage = function(lang) {
-                    mapLayers.forEach(item => {
-                        const wasOpen = item.layer.isPopupOpen();
-                        item.layer.setPopupContent(lang === 'id' ? item.data.infoId : item.data.infoEn);
-                        if (wasOpen) {
-                            item.layer.openPopup();
-                        }
-                    });
-                };
-            })
-            .catch(err => console.error('Error loading GeoJSON:', err));
+        // Add click events to cards
+        regionCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const region = card.getAttribute('data-region');
+                openMapModal(region);
+            });
+        });
+
+        function closeModal() {
+            mapModal.classList.add('hidden');
+            mapModal.classList.remove('flex');
+            activeRegionKey = null;
+        }
+
+        closeMapModal.addEventListener('click', closeModal);
+
+        // Close when clicking outside modal content
+        mapModal.addEventListener('click', (e) => {
+            if (e.target === mapModal) {
+                closeModal();
+            }
+        });
+
+        // Expose function to update popups when language changes
+        window.updateMapLanguage = function(lang) {
+            if (currentMarker && activeRegionKey && currentMarker.isPopupOpen()) {
+                const loc = locations[activeRegionKey];
+                currentMarker.setPopupContent(lang === 'id' ? loc.infoId : loc.infoEn);
+                currentMarker.openPopup();
+            }
+        };
     }
 });
